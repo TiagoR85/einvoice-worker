@@ -39,22 +39,29 @@ Both are structured-mode CloudEvents (`application/cloudevents+json`) on topic e
 - **DLQ:** after 5 retries, or immediately on permanent errors (bad payload, 401/403) → `einvoice-worker.invoice-created.dlq` for inspection.
 - **Dedupe:** Redis `done:invoice:{invoiceId}` (7d) skips duplicates; `wip:invoice:{invoiceId}` (60s) guards concurrent processing. The deterministic storage key makes re-uploads overwrite-safe.
 
-## Quickstart (two terminals)
-
-Prerequisites: Docker Desktop; the [`einvoice-api`](https://github.com/TiagoR85/einvoice-api) stack running (`docker compose up`) on ports 8080/5672/6379.
+## Quickstart — one command (the whole hub)
 
 ```powershell
-# terminal 1 — worker stack (Silo + worker)
+git clone https://github.com/TiagoR85/einvoice-ui.git
+cd einvoice-ui
+Copy-Item .env.example .env   # set OIDC_CLIENT_SECRET, OIDC_WORKER_CLIENT_SECRET, POSTGRES_PASSWORD
+docker compose up --build
+```
+
+The compose in [`einvoice-ui`](https://github.com/TiagoR85/einvoice-ui) builds this worker from `main` and boots it against the hub's RabbitMQ, Redis and Silo.
+
+### Alternative — worker against an existing hub
+
+With the [`einvoice-api`](https://github.com/TiagoR85/einvoice-api) stack running (`docker compose up` on ports 8080/5672/6379):
+
+```powershell
 git clone https://github.com/TiagoR85/einvoice-worker.git
 cd einvoice-worker
 Copy-Item .env.example .env    # set WORKER_CLIENT_SECRET = OIDC_WORKER_CLIENT_SECRET used by the API
 docker compose up --build
 ```
 
-```powershell
-# terminal 2 — create an invoice via the API (see einvoice-api README for the token)
-# then watch terminal 1 logs: "Invoice {id} processed into invoices/{id}.pdf"
-```
+Then create an invoice via the API (see the einvoice-api README for the token) and watch the worker logs: `Invoice {id} processed into invoices/{id}.pdf`.
 
 Local development without containers for the worker itself:
 
