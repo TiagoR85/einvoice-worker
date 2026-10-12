@@ -1,0 +1,22 @@
+﻿# .NET
+bin/
+obj/
+TestResults/
+*.user
+*.trx
+coverage.*.xml
+
+# Env (secrets never committed)
+.env
+
+# IDE
+.vs/
+.idea/
+*.suo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Superpowers scratch
+.superpowers/
