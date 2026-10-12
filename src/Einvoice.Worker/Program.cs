@@ -39,7 +39,10 @@ builder.Services.AddSingleton(new OAuthClientOptions(
     builder.Configuration["Api:ClientSecret"]!,
     builder.Configuration["Api:Scope"] ?? "invoice:read"));
 builder.Services.AddHttpClient<OAuthTokenProvider>();
-builder.Services.AddHttpClient<IInvoiceApiClient, InvoiceApiClient>();
+builder.Services.AddHttpClient<IInvoiceApiClient, InvoiceApiClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Api:BaseUrl"]!);
+});
 
 builder.Services.AddSingleton<BackoffCalculator>();
 builder.Services.AddSingleton<IPdfInvoiceGenerator, PdfInvoiceGenerator>();
