@@ -4,40 +4,23 @@ namespace Einvoice.Worker.Domain;
 
 public static class AttemptResolver
 {
-    public static int Resolve(IReadOnlyDictionary<string, object?>? headers, string retryQueueName)
+    public const string AttemptHeader = "x-attempt";
+
+    public static int Resolve(IReadOnlyDictionary<string, object?>? headers)
     {
-        if (headers is null || !headers.TryGetValue("x-death", out var raw))
+        if (headers is null || !headers.TryGetValue(AttemptHeader, out var raw))
             return 0;
 
-        if (raw is not IReadOnlyList<object> entries)
-            return raw is not List<object> list ? 0 : CountIn(list, retryQueueName);
-
-        return CountIn(entries, retryQueueName);
+        return AsInt(raw);
     }
 
-    private static int CountIn(IReadOnlyList<object> entries, string retryQueueName)
+    private static int AsInt(object? value) => value switch
     {
-        foreach (var entry in entries)
-        {
-            if (entry is not IReadOnlyDictionary<string, object?> dict)
-                continue;
-
-            if (!dict.TryGetValue("queue", out var queueRaw) || AsString(queueRaw) != retryQueueName)
-                continue;
-
-            if (dict.TryGetValue("count", out var countRaw) &&
-                long.TryParse(AsString(countRaw), out var count))
-                return (int)count;
-        }
-
-        return 0;
-    }
-
-    private static string? AsString(object? value) => value switch
-    {
-        null => null,
-        string s => s,
-        byte[] bytes => Encoding.UTF8.GetString(bytes),
-        _ => value.ToString()
+        null => 0,
+        string s => int.TryParse(s, out var i) ? i : 0,
+        byte[] bytes => int.TryParse(Encoding.UTF8.GetString(bytes), out var i) ? i : 0,
+        int i => i,
+        long l => (int)l,
+        _ => 0
     };
 }
