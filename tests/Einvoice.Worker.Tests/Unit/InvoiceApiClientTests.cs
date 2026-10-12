@@ -62,7 +62,7 @@ public sealed class InvoiceApiClientTests : IDisposable
         Assert.Equal("INV-2026-001", first.Number);
         Assert.Equal(first.Id, second.Id);
         var tokenCalls = _server.LogEntries.Count(e =>
-            e.RequestMessage.Path is "/connect/token" && e.RequestMessage.Method == "POST");
+            e.RequestMessage is { Path: "/connect/token", Method: "POST" });
         Assert.Equal(1, tokenCalls);
     }
 
