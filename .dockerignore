@@ -1,0 +1,9 @@
+**/.git
+**/bin
+**/obj
+**/TestResults
+.env
+docs
+README.md
+LICENSE
+tests
