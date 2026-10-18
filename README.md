@@ -95,6 +95,7 @@ Unit tests run in milliseconds; integration tests boot real RabbitMQ, Redis and 
 
 - [ADR-0001](docs/adr/ADR-0001-event-as-trigger.md) — events trigger, payloads are fetched over REST
 - [ADR-0002](docs/adr/ADR-0002-processing-marker-and-retry-topology.md) — Redis wip/done marker + retry/DLQ topology
+- [ADR-0003](docs/adr/ADR-0003-s3-storage-via-silo.md) — plain S3 SDK with Silo as MinIO-compatible storage
 
 ## Roadmap
 
