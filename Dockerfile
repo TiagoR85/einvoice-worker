@@ -11,7 +11,7 @@ COPY src/ src/
 RUN dotnet publish src/Einvoice.Worker/Einvoice.Worker.csproj \
     -c Release -o /app/publish --no-restore
 
-FROM mcr.microsoft.com/dotnet/runtime:10.0 AS runtime
+FROM mcr.microsoft.com/dotnet/runtime:11.0 AS runtime
 WORKDIR /app
 
 # Worker serves no HTTP endpoint; liveness is process supervision + structured logs.
